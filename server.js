@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 const fs = require("fs");
 const path = require("path");
 const { PDFDocument } = require("pdf-lib");
@@ -27,8 +27,8 @@ app.post("/convert", async (req, res) => {
 
   try {
     const browser = await puppeteer.launch({
-      headless: "new",
-      executablePath: puppeteer.executablePath(), // FIX for Render
+      headless: true,
+      executablePath: process.env.CHROME_PATH || "/usr/bin/google-chrome",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
@@ -60,7 +60,6 @@ app.post("/convert", async (req, res) => {
 
     await browser.close();
 
-    // ---- Merge PDF ----
     const mergedPdf = await PDFDocument.create();
     const bytes = fs.readFileSync(filePath);
     const pdf = await PDFDocument.load(bytes);
@@ -72,7 +71,6 @@ app.post("/convert", async (req, res) => {
     const mergedBytes = await mergedPdf.save();
     fs.writeFileSync(mergedPath, mergedBytes);
 
-    // ---- Create ZIP ----
     const zipName = `all_${Date.now()}.zip`;
     const zipPath = path.join(zipDir, zipName);
     const output = fs.createWriteStream(zipPath);
@@ -84,12 +82,7 @@ app.post("/convert", async (req, res) => {
     await archive.finalize();
 
     res.json({
-      pages: [
-        {
-          pdf: `pdfs/${fileName}`,
-          hasVideo,
-        },
-      ],
+      pages: [{ pdf: `pdfs/${fileName}`, hasVideo }],
       mergedPdf: `pdfs/${mergedName}`,
       zip: `zips/${zipName}`,
     });
@@ -100,7 +93,4 @@ app.post("/convert", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
-});
+app.listen(PORT, () => console.log("Server running on port " + PORT));

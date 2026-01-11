@@ -19,7 +19,7 @@ function App() {
     setZipFile(null);
 
     try {
-      const res = await fetch("http://localhost:5000/convert", {
+      const res = await fetch("https://url-to-pdf-1-kdzs.onrender.com/convert", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
@@ -78,7 +78,7 @@ function App() {
             {selectedPdf ? (
               <iframe
                 title="pdf"
-                src={`http://localhost:5000/${selectedPdf}`}
+                src={`https://url-to-pdf-1-kdzs.onrender.com/${selectedPdf}`}
               />
             ) : (
               <p>Select a page to preview</p>
@@ -91,7 +91,7 @@ function App() {
         <div className="downloads">
           {mergedPdf && (
             <a
-              href={`http://localhost:5000/${mergedPdf}`}
+              href={`https://url-to-pdf-1-kdzs.onrender.com/${mergedPdf}`}
               target="_blank"
               rel="noreferrer"
             >
@@ -100,7 +100,7 @@ function App() {
           )}
           {zipFile && (
             <a
-              href={`http://localhost:5000/${zipFile}`}
+              href={`https://url-to-pdf-1-kdzs.onrender.com/${zipFile}`}
               target="_blank"
               rel="noreferrer"
             >
