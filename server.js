@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const fs = require("fs");
 const path = require("path");
 const { PDFDocument } = require("pdf-lib");
@@ -28,7 +28,6 @@ app.post("/convert", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.CHROME_PATH || "/usr/bin/google-chrome",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
@@ -55,7 +54,6 @@ app.post("/convert", async (req, res) => {
       path: filePath,
       format: "A4",
       printBackground: true,
-      preferCSSPageSize: true,
     });
 
     await browser.close();
@@ -93,4 +91,6 @@ app.post("/convert", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log("Server running on port " + PORT));
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
+});
