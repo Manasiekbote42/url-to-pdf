@@ -28,6 +28,7 @@ app.post("/convert", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       headless: "new",
+      executablePath: puppeteer.executablePath(), // FIX for Render
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
@@ -59,7 +60,7 @@ app.post("/convert", async (req, res) => {
 
     await browser.close();
 
-    // ---- Merge PDF (only one for now, but scalable) ----
+    // ---- Merge PDF ----
     const mergedPdf = await PDFDocument.create();
     const bytes = fs.readFileSync(filePath);
     const pdf = await PDFDocument.load(bytes);
